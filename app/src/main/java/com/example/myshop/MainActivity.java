@@ -151,6 +151,13 @@ public class MainActivity extends AppCompatActivity {
         outState.putInt("openModalIndex", openedModalIndex);
     }
 
+    public boolean goToPreferences(MenuItem menuItem) {
+        Intent intent = new Intent(this, PreferencesActivity.class);
+        this.startActivity(intent);
+
+        return true;
+    }
+
     public boolean goToAbout(MenuItem menuItem) {
         Intent intent = new Intent(this, AboutActivity.class);
         this.startActivity(intent);
