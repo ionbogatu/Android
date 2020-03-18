@@ -1,11 +1,16 @@
 package com.example.myshop;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -17,6 +22,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
     private int openedModalIndex = -1;
 
@@ -24,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
     String[] titleArray = {"Product 1", "Product 2", "Product 3"};
     String[] descriptionArray = {"Description 1", "Description 2", "Description 3"};
+    ArrayList<Integer> wishList = new ArrayList<>();
     Dialog dialog;
 
     @Override
@@ -41,11 +49,36 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 openedModalIndex = position;
 
-                MainActivity.this.dialog = new Dialog(MainActivity.this);
-                MainActivity.this.ShowPopup(
-                        MainActivity.this.titleArray[position],
-                        MainActivity.this.descriptionArray[position]
-                );
+                final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    alertDialogBuilder.setMessage("Add this product to your wishlist?")
+                            .setCancelable(false)
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    MainActivity.this.wishList.add(position);
+                                    dialog.dismiss();
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                }
+
+                AlertDialog alertDialog = alertDialogBuilder.create();
+
+                alertDialog.setOnDismissListener((dialog) -> {
+                    MainActivity.this.dialog = new Dialog(MainActivity.this);
+                    MainActivity.this.ShowPopup(
+                            MainActivity.this.titleArray[position],
+                            MainActivity.this.descriptionArray[position]
+                    );
+                });
+
+                alertDialog.show();
             }
         });
     }
@@ -116,5 +149,24 @@ public class MainActivity extends AppCompatActivity {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("openModalIndex", openedModalIndex);
+    }
+
+    public boolean goToAbout(MenuItem menuItem) {
+        Intent intent = new Intent(this, AboutActivity.class);
+        this.startActivity(intent);
+
+        return true;
+    }
+
+    public boolean callMe(MenuItem menuItem) {
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, "Call Me.");
+        sendIntent.setType("text/plain");
+
+        Intent shareIntent = Intent.createChooser(sendIntent, null);
+        startActivity(shareIntent);
+
+        return true;
     }
 }
