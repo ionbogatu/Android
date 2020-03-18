@@ -2,8 +2,10 @@ package com.example.myshop;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -15,9 +17,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.ArrayList;
-
 public class MainActivity extends AppCompatActivity {
+    private int openedModalIndex = -1;
+
     ListView listView;
 
     String[] titleArray = {"Product 1", "Product 2", "Product 3"};
@@ -37,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                openedModalIndex = position;
+
                 MainActivity.this.dialog = new Dialog(MainActivity.this);
                 MainActivity.this.ShowPopup(
                         MainActivity.this.titleArray[position],
@@ -46,6 +50,13 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
     public void ShowPopup(String title, String description) {
         dialog.setContentView(R.layout.modal);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -53,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
         textClose.setOnClickListener((v) -> {
             dialog.dismiss();
+            openedModalIndex = -1;
         });
 
         TextView modalProductTitle = dialog.findViewById(R.id.modal_productTitle);
@@ -89,5 +101,20 @@ public class MainActivity extends AppCompatActivity {
 
             return row;
         }
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        if (openedModalIndex != -1) {
+            ShowPopup(MainActivity.this.titleArray[openedModalIndex], MainActivity.this.descriptionArray[openedModalIndex]);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("openModalIndex", openedModalIndex);
     }
 }
