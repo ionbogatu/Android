@@ -20,6 +20,8 @@ public class PreferencesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setTitle("Preferences");
         setContentView(R.layout.activity_preferences);
 
         name = findViewById(R.id.preference_name);

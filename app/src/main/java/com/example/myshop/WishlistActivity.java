@@ -8,6 +8,8 @@ public class WishlistActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setTitle("Wishlist");
         setContentView(R.layout.activity_wishlist);
     }
 }

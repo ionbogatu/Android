@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -21,6 +23,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 
@@ -87,6 +91,21 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+
+        // Check if menu contains location and sensors item
+        NavigationView navigationView = findViewById(R.id.navigation_view);
+        MenuItem locationAndSensorsMenuItem = navigationView.getMenu().findItem(R.id.menu_location_and_sensors);
+        if (locationAndSensorsMenuItem != null) {
+
+            // Check if device has sensors
+            SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+            if (sensorManager == null || sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER).size() == 0) {
+
+                // set menu item to disabled
+                locationAndSensorsMenuItem.setEnabled(false);
+            }
+        }
+
         return true;
     }
 
@@ -153,6 +172,13 @@ public class MainActivity extends AppCompatActivity {
 
     public boolean goToPreferences(MenuItem menuItem) {
         Intent intent = new Intent(this, PreferencesActivity.class);
+        this.startActivity(intent);
+
+        return true;
+    }
+
+    public boolean goToLocationAndSensors(MenuItem menuItem) {
+        Intent intent = new Intent(this, LocationAndSensorsActivity.class);
         this.startActivity(intent);
 
         return true;
