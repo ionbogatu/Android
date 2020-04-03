@@ -191,6 +191,13 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    public boolean goToMyPhotos(MenuItem menuItem) {
+        Intent intent = new Intent(this, MyPhotosActivity.class);
+        this.startActivity(intent);
+
+        return true;
+    }
+
     public boolean callMe(MenuItem menuItem) {
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
